@@ -32,17 +32,67 @@
 
 // export default router;
 
+// backend/routes/employeeRoutes.js
+// backend/routes/employeeRoutes.js
+// backend/routes/employeeRoutes.js
 import express from "express";
+import Employee from "../models/Employee.js";
 import { ensureAuth } from "../middleware/auth.js";
-import { cacheEmployees } from "../middleware/cache.js";
-import { getAll, getOne, createOne, updateOne, deleteOne } from "../controllers/employeeController.js";
 
 const router = express.Router();
 
-router.get("/", ensureAuth, cacheEmployees, getAll);
-router.get("/:id", ensureAuth, getOne);
-router.post("/", ensureAuth, createOne);
-router.put("/:id", ensureAuth, updateOne);
-router.delete("/:id", ensureAuth, deleteOne);
+// All routes here require authentication
+router.use(ensureAuth);
+
+// CREATE employee
+router.post("/", async (req, res) => {
+  try {
+    const employee = await Employee.create(req.body);
+    res.status(201).json(employee);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// READ all employees
+router.get("/", async (req, res) => {
+  try {
+    const employees = await Employee.find();
+    res.json(employees);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// READ one employee
+router.get("/:id", async (req, res) => {
+  try {
+    const employee = await Employee.findById(req.params.id);
+    if (!employee) return res.status(404).json({ error: "Not found" });
+    res.json(employee);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// UPDATE employee
+router.put("/:id", async (req, res) => {
+  try {
+    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(employee);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE employee
+router.delete("/:id", async (req, res) => {
+  try {
+    await Employee.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 export default router;

@@ -71,7 +71,6 @@
 // };
 
 import Employee from "../models/Employee.js";
-
 export async function getAll(req, res) {
   try {
     // cache middleware will return cached if exists; otherwise continue
