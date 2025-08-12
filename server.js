@@ -227,11 +227,12 @@ app.locals.redis = redisClient;
 
 // CORS (allow credentials so cookies work in Postman & frontend)
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-  credentials: true
+  origin: '*',
+credentials: true
 }));
 
 // Middleware
+
 app.use(express.json());
 app.use(sessionMiddleware());
 
